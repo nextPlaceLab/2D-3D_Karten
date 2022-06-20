@@ -1,0 +1,17 @@
+{
+    "id":   "OSM",
+    "source": {
+        "url": "https://c.tile.openstreetmap.org/${z}/${x}/${y}.png",
+        "crs": "EPSG:3857",
+        "networkOptions": {
+            "crossOrigin": "anonymous"
+        },
+        "format": "image/jpeg",
+        "attribution" : [{
+            "name":"OpenStreetMap contributors",
+            "url":"https://www.openstreetmap.org"
+        }],
+        "name": "OSM",
+        "tileMatrixSet": "PM"
+    }
+}

@@ -1,0 +1,332 @@
+<html>
+    <head>
+        <title>Test - Stadtmodell</title>
+
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="css/example.css">
+        <link rel="stylesheet" type="text/css" href="css/LoadingScreen.css">
+        <link rel="stylesheet" type="text/css" href="css/general.css">
+        <link rel="stylesheet" type="text/css" href="css/modal.css">
+        <link rel="stylesheet" type="text/css" href="css/slider.css">
+		<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+		
+		<link rel="stylesheet" href="css/GpPluginItowns.css" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js"></script>
+		
+		<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    </head>
+    <body>
+		<div class="sliderdivcontainer">
+			<div class="shadowCheckBox">
+				<input type='checkbox' checked onclick='handleClickShadow(this);'>
+				<label>Schatten</label>
+			</div>
+			<div class="dateShadowPicker">
+				<label>Datum: <input type="text" id="datefield"></label>
+			</div>
+			<div class="slidercontainer">
+				<input class="slider" type="range" min="0" max="23.5" value="12" step="0.5" id="slider" orient="horizontal">
+				<!-- <input type="range" min="0" max="23.5" value="12" step="0.5" id="slider" orient="horizontal"> -->
+			</div>
+		</div>
+		
+		<div class="attributioncontainer">
+			<p id="attribution" style="margin-right:10px;"></p>
+		</div>
+
+
+        <div id="viewerDiv"></div>
+		
+        <script src="dist/GUI/GuiTools.js"></script>
+        <script src="dist/itowns.js"></script>
+        <script src="js/LoadingScreen.js"></script>
+        <script src="dist/debug.js"></script>
+		<script src="dist/3dTilesHelper.js"></script>
+		<script src="js/helper.js"></script>
+		<script src="js/FeatureToolTip.js"></script>
+		<script src="dist/astronomy.min.js"></script>
+		<script src="js/helper_sunposition.js"></script>
+		<script src="js/helper_tests.js"></script>
+		<script src="js/datepicker-de.js"></script>
+		<script src="dist/GpPluginItowns.js"></script>
+
+		<!-- The Modal -->
+		<div id="modal-popup" class="modal">
+			<!-- Modal content -->
+			<div id="modalInfo" class="modal-content">
+				<!-- <span class="close">&times;</span> -->
+			</div>
+		</div>
+		<div id="modal-popup-WoMa" class="modal">
+			<!-- Modal content -->
+			<div id="modalInfo" class="modal-content">
+				<!-- <span class="close">&times;</span> -->
+			</div>
+		</div>
+		<div id="modal-popup-Apo" class="modal">
+			<!-- Modal content -->
+			<div id="modalInfo" class="modal-content">
+				<!-- <span class="close">&times;</span> -->
+			</div>
+		</div>
+		<div id="modal-popup-Corona" class="modal">
+			<!-- Modal content -->
+			<div id="modalInfo" class="modal-content">
+				<!-- <span class="close">&times;</span> -->
+			</div>
+		</div>
+		
+		
+        <script type="text/javascript">
+		
+			var THREE = itowns.THREE;
+
+			// Define initial camera position
+            var positionOnGlobe = { longitude: 6.956944, latitude: 50.938056, altitude: 5000 };
+            var placement = {
+                coord: new itowns.Coordinates('EPSG:4326', 6.978090, 50.922810), range: 1000, // Deutzer Hafen
+                tilt: 45,
+                //heading: -180
+            }
+
+            var viewerDiv = document.getElementById('viewerDiv');
+			
+			var slider = document.getElementById("slider");
+			slider.addEventListener("input", setSunPosition);
+            
+            var globeOptions = {
+            	scene3D : new THREE.Scene(),
+            }
+
+			var viewExt = new itowns.GlobeViewExtended(viewerDiv, placement, globeOptions);
+			view = viewExt.getGlobeView();
+			
+			view.mainLoop.gfxEngine.renderer.shadowMap.enabled = true;
+			view.mainLoop.gfxEngine.renderer.shadowMap.type = itowns.THREE.PCFShadowMap; //VSMShadowMap;
+			view.mainLoop.gfxEngine.renderer.shadowMap.needsUpdate = true;
+            
+			// *** setting sun position *** //
+			var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+			var sunAlt = 5000;
+			var now = new Date();
+			now.setHours(12);
+			now.setMinutes(0);
+			var posObs = new itowns.Coordinates('EPSG:4326', positionOnGlobe.longitude, positionOnGlobe.latitude, 0).as(view.referenceCrs);
+			
+			var datefield = document.getElementById('datefield');
+			datefield.value = now.toLocaleDateString() + ", " + "12:00:00";
+			
+			// delete original sun
+			view.tileLayer.object3d.remove (view.tileLayer.object3d.children[0]);
+			
+			// Add new sun casting shadows
+			var sun = new THREE.DirectionalLight( 0xffffff, 1, 100 );
+			setSunPositionDate(now);
+			sun.castShadow = true;
+			sun.updateMatrixWorld(true);
+			sun.shadow.camera.far = 50000;
+			view.tileLayer.object3d.add(sun);
+			initSunTarget ();
+
+			shadowSize = 4096;
+			
+			sun.shadow.mapSize.width = 4*shadowSize;  // default
+			sun.shadow.mapSize.height = 4*shadowSize;
+			
+			sun.shadow.camera.left = -shadowSize;
+			sun.shadow.camera.right = shadowSize;
+			sun.shadow.camera.top = shadowSize;
+			sun.shadow.camera.bottom = -shadowSize;
+			
+			function handleClickShadow(cb) {
+				sun.castShadow = cb.checked;
+				view.notifyChange();
+			}
+
+            setupLoadingScreen(viewerDiv, view);
+
+            var menuGlobe = new GuiTools('menuDiv', view, 300);
+			
+			
+			itowns.Fetcher.json('./layers/OSM.json')
+				.then(function _(config) {
+					config.source = new itowns.TMSSource(config.source);
+					var osmLayer = new itowns.ColorLayer('OSM', config);
+					viewExt.addLayer(osmLayer)
+				});
+
+			itowns.Fetcher.json('./layers/CartoCDN.json')
+				.then(function _(config) {
+					config.source = new itowns.TMSSource(config.source);
+					var cartoCdnLayer = new itowns.ColorLayer('CARTO', config);
+					viewExt.addLayer(cartoCdnLayer)
+				});
+
+            // Add Open Street Map orthographic layer
+			viewExt.listen(itowns.GlobeViewExtended.EVENTS.GLOBE_INITIALIZED, () => {
+
+
+				// adds a layerSwitcher control with specific configuration for ortho layer
+				var layerSwitcher = new itowns.control.LayerSwitcher({
+					layers: [ {
+						id: "CARTO",
+						config: {
+							title: "CARTO Basiskarte",
+							description: "CARTO-Layer",
+						}
+					},
+					{
+						id: "OSM",
+						config: {
+							title: "OSM Basiskarte",
+							description: "OSM-Layer",
+						}
+					},
+					]
+				});
+				// adds the layerSwitcher control
+				viewExt.addWidget(layerSwitcher);
+			});
+				
+			var attr = document.getElementById("attribution");
+			attr.innerHTML = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href= "https://carto.com/about-carto/">CARTO</a>'
+
+			// *** C3D Tiles ***
+			// *****************
+
+			// *** Stadtmodell *** //
+			function c3dTilesAddonLoaded(obj) {
+				let child = obj.children[1];
+				if (child != undefined) {
+					child.children[0].children[0].receiveShadow = true;
+				}
+				obj.children[0].castShadow = true;
+				obj.children[0].receiveShadow = true;
+				view.notifyChange();
+			}
+				
+			const extensions = new itowns.C3DTExtensions();
+            extensions.registerExtension("3DTILES_batch_table_hierarchy",
+                { [itowns.C3DTilesTypes.batchtable]:
+                    itowns.C3DTBatchTableHierarchyExtension });
+				
+            // Create a new 3D tiles layer with batch table hierarchy extension
+			var cityMaterial = new THREE.MeshLambertMaterial({ color: 0xdcdcdc });
+			
+            var $3dTilesLayerBTHierarchy = new itowns.C3DTilesLayer(
+                'Stadtmodell', {
+                    name: 'BTHierarchy',
+                    source: new itowns.C3DTilesSource({
+						url: './c3dtiles/tileset.json',
+                    }),
+					overrideMaterials: cityMaterial,
+					onTileContentLoaded: c3dTilesAddonLoaded,
+                },
+            view);
+			
+			itowns.View.prototype.addLayer.call(view, $3dTilesLayerBTHierarchy);
+	
+			// Add a debug UI
+            debug.create3dTilesDebugUI(menuGlobe.gui, view,
+                $3dTilesLayerBTHierarchy);
+
+
+			// *** Apotheken ***
+			const apoLayer = new itowns.GeometryLayer('Apotheken', new itowns.THREE.Group(), {
+				source: new itowns.FileSource({
+                    url: './notdienstkalender.geojson',
+                    crs: 'EPSG:4326',
+					fetcher: itowns.Fetcher.json,
+					parser: itowns.GeoJsonParser.parse,
+                    //format: 'application/json',
+                }),
+				update: itowns.FeatureProcessing.update,
+				convert: itowns.Feature2Mesh.convert({}),
+				mergeFeatures: false,
+				onMeshCreated: function setMesh(meshes) {
+					let texture = new THREE.TextureLoader().load( 'images/icons/200px-Deutsche_Apotheke_Logo.svg.png' );
+
+					let cylGgeometry = new THREE.CylinderGeometry(2, 0, 60, 8);
+					cylGgeometry.rotateX(Math.PI/2);
+					cylGgeometry.rotateZ(-Math.PI/2);
+					cylGgeometry.translate(0,0,30);
+					let cirGeometry = new THREE.CircleGeometry( 20, 32 );
+					cirGeometry.rotateX(Math.PI/2);
+					cirGeometry.translate(0,0,80);
+					
+					cirGeometry.merge(cylGgeometry);
+					
+					let material = new THREE.MeshBasicMaterial( { map: texture } );
+					let iconApo = new THREE.Mesh( cirGeometry, material );
+
+					if (meshes.children.length == 0) {
+						let icon = iconApo.clone();
+						
+						let coords = new itowns.Coordinates('EPSG:4978', meshes.feature.vertices).as('EPSG:4326');
+						//coords.altitude += .30;
+						
+						icon.feature = meshes.feature;
+						icon.position.copy(coords.as(view.referenceCrs));
+						icon.setRotationFromQuaternion( itowns.OrientationUtils.quaternionFromEnuToCRS ( 'EPSG:4978', coords) );
+						
+						meshes.layer.object3d.add( icon );
+					}
+					
+					for (mesh of meshes.children) {
+						let icon = iconApo.clone();
+						
+						let coords = new itowns.Coordinates('EPSG:4978', mesh.feature.vertices).as('EPSG:4326');
+						//coords.altitude += 75;
+
+						icon.feature = mesh.feature;
+						icon.position.copy(coords.as(view.referenceCrs));
+						icon.setRotationFromQuaternion( itowns.OrientationUtils.quaternionFromEnuToCRS ( 'EPSG:4978', coords) );
+						
+						mesh.layer.object3d.add( icon );
+					}
+					view.notifyChange();
+                },
+			});
+			
+			// Add the layer
+			view.addLayer(apoLayer);
+
+			var apoPickingArgs = {};
+            apoPickingArgs.htmlDiv = document.getElementById('modal-popup-Apo');
+            apoPickingArgs.view = view;
+			
+			function apoPicking() {
+				apoLayer.whenReady.then(function _(layer) {
+					apoPickingArgs.layer = layer;
+					window.addEventListener('mousemove',
+						(event) => fillModalWithApoPickingInfo(event, view, apoPickingArgs),false);
+				});			
+			}
+			
+			view.addEventListener('layers-initialized', apoPicking);
+			
+			apoLayer.whenReady.then( function _(layer) {
+				var gui = debug.GeometryDebug.createGeometryDebugUI(menuGlobe.gui, view, layer);
+            });
+
+
+
+
+            view.addEventListener(itowns.GLOBE_VIEW_EVENTS.GLOBE_INITIALIZED, function () {
+                // eslint-disable-next-line no-console
+                console.info('Globe initialized');
+			
+				view.addEventListener(itowns.GLOBE_VIEW_EVENTS.GLOBE_INITIALIZED, function m() {
+					const states = view.controls.getStates();
+					states.PAN.enable = false;
+					states.ORBIT.keyboard = undefined;
+					states.DOLLY.mouseButton = itowns.THREE.MOUSE.RIGHT;
+					states.ORBIT.mouseButton = itowns.THREE.MOUSE.MIDDLE;
+				});
+            });
+        </script>
+    </body>
+</html>

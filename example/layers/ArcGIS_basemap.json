@@ -1,0 +1,17 @@
+{
+    "id":   "ArcGIS Basemap",
+    "source": {
+        "url": "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}.png",
+        "projection": "EPSG:3857",
+        "networkOptions": {
+            "crossOrigin": "anonymous"
+        },
+        "format": "image/jpeg",
+        "attribution" : [{
+            "name":"OpenStreetMap contributors",
+            "url":"https://www.openstreetmap.org"
+        }],
+        "name": "ArcGIS Basemap",
+        "tileMatrixSet": "PM"
+    }
+}

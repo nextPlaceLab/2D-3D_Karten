@@ -1,0 +1,18 @@
+{
+    "id":   "CARTO",
+    "source": {
+        "url": "https://a.basemaps.cartocdn.com/light_all/${z}/${x}/${y}@2x.png",
+		
+        "crs": "EPSG:3857",
+        "networkOptions": {
+            "crossOrigin": "anonymous"
+        },
+        "format": "image/jpeg",
+        "attribution" : [{
+            "name":"OpenStreetMap contributors",
+            "url":"https://www.openstreetmap.org"
+        }],
+        "name": "CARTO",
+        "tileMatrixSet": "PM"
+    }
+}

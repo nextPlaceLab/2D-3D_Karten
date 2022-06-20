@@ -1,0 +1,134 @@
+{
+    "id":   "DOP",
+    "source": {
+        "url": "https://geoserver.livinglab-essigfabrik.online/geoserver/gwc/service/wmts",
+        "projection": "EPSG:4326",
+        "networkOptions": {
+            "crossOrigin": "anonymous"
+        },
+        "format": "image/jpeg",
+		"style": "",
+        "attribution" : {
+            "name":"LLE",
+            "url":"https://geoserver.livinglab-essigfabrik.online/geoserver/gwc/service/wmts"
+        },
+        "name": "LLE:nw_dop",
+        "tileMatrixSet": "EPSG:4326",
+        "tileMatrixSetLimits": {
+            "EPSG:4326:2": {
+                "minTileRow": 0,
+                "maxTileRow": 0,
+                "minTileCol": 4,
+                "maxTileCol": 4
+            },
+            "EPSG:4326:3": {
+                "minTileRow": 1,
+                "maxTileRow": 1,
+                "minTileCol": 8,
+                "maxTileCol": 8
+            },
+            "EPSG:4326:4": {
+                "minTileRow": 3,
+                "maxTileRow": 3,
+                "minTileCol": 16,
+                "maxTileCol": 16
+            },
+            "EPSG:4326:5": {
+                "minTileRow": 6,
+                "maxTileRow": 7,
+                "minTileCol": 32,
+                "maxTileCol": 33
+            },
+            "EPSG:4326:6": {
+                "minTileRow": 13,
+                "maxTileRow": 14,
+                "minTileCol": 65,
+                "maxTileCol": 67
+            },
+            "EPSG:4326:7": {
+                "minTileRow": 26,
+                "maxTileRow": 28,
+                "minTileCol": 131,
+                "maxTileCol": 134
+            },
+            "EPSG:4326:8": {
+                "minTileRow": 7,
+                "maxTileRow": 256,
+                "minTileCol": 0,
+                "maxTileCol": 256
+            },
+            "EPSG:4326:9": {
+                "minTileRow": 15,
+                "maxTileRow": 512,
+                "minTileCol": 0,
+                "maxTileCol": 512
+            },
+            "EPSG:4326:10": {
+                "minTileRow": 31,
+                "maxTileRow": 1024,
+                "minTileCol": 0,
+                "maxTileCol": 1024
+            },
+            "EPSG:4326:11": {
+                "minTileRow": 62,
+                "maxTileRow": 2048,
+                "minTileCol": 0,
+                "maxTileCol": 2048
+            },
+            "EPSG:4326:12": {
+                "minTileRow": 125,
+                "maxTileRow": 4096,
+                "minTileCol": 0,
+                "maxTileCol": 4096
+            },
+            "EPSG:4326:13": {
+                "minTileRow": 2739,
+                "maxTileRow": 4628,
+                "minTileCol": 41,
+                "maxTileCol": 7917
+            },
+            "EPSG:4326:14": {
+                "minTileRow": 5478,
+                "maxTileRow": 9256,
+                "minTileCol": 82,
+                "maxTileCol": 15835
+            },
+            "EPSG:4326:15": {
+                "minTileRow": 6813,
+                "maxTileRow": 7233,
+                "minTileCol": 33775,
+                "maxTileCol": 34530
+            },
+            "EPSG:4326:16": {
+                "minTileRow": 13627,
+                "maxTileRow": 14467,
+                "minTileCol": 67550,
+                "maxTileCol": 69061
+            },
+            "EPSG:4326:17": {
+                "minTileRow": 43825,
+                "maxTileRow": 74052,
+                "minTileCol": 660,
+                "maxTileCol": 126683
+            },
+            "EPSG:4326:18": {
+                "minTileRow": 87651,
+                "maxTileRow": 148105,
+                "minTileCol": 1320,
+                "maxTileCol": 253366
+            },
+            "EPSG:4326:19": {
+                "minTileRow": 175296,
+                "maxTileRow": 294063,
+                "minTileCol": 170144,
+                "maxTileCol": 343487
+            },
+            "EPSG:4326:20": {
+                "minTileRow": 357008,
+                "maxTileRow": 384687,
+                "minTileCol": 524400,
+                "maxTileCol": 540927
+            }
+        }
+    }
+}

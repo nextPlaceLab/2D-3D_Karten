@@ -1,0 +1,15 @@
+#slider{
+  writing-mode: bt-lr; /* IE */
+  -webkit-appearance: slider-horizontal; /* WebKit */
+}
+
+.slider {
+	position: absolute;
+    bottom:0;
+	z-index: 10;
+}
+
+.slidercontainer {
+	margin-top:80px;
+	width: 100%; /* Width of the outside container */
+}
